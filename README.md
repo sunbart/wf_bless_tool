@@ -1,6 +1,6 @@
 # Warframe Bless Tool
 
-A small utility to assist in organizing Blessing sessions
+A small utility to assist in organizing Blessing sessions, made by and for the blessing community over at the [Warframe Blessing Discord server](https://tiny.cc/warframeblessing).
 
 # How to use
 
