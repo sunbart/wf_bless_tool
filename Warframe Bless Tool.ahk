@@ -23,6 +23,12 @@ auto_advance := false ; true/false
 ; This variable sets how long the tooltip is displayed for.
 tooltip_timeout := 3 ; number of seconds
 
+; Config section
+; The Config section holds the Region, Relay, Relay Instance and Blessers controls.
+; This option sets whether the Config section is expanded when the script starts.
+; It can also be toggled live with F3.
+config_section_visible := false ; true/false
+
 ; Celebration emojis
 ; A list of emojis used in the "Relay done" discord message. Picked randomly every time.
 celebration_emojis := [
@@ -32,7 +38,7 @@ celebration_emojis := [
 ; Organizer mode
 ; In Organizer mode, steps for organizing the whole session are also included.
 ; Otherwise, only steps that are needed for the relay itself are included.
-organizer_mode := true ; true/false
+organizer_mode := false ; true/false
 
 ; Bless session timing
 ; This option sets at what time of the hour the bless session is planned to start.
@@ -92,11 +98,10 @@ steps := [
     {
         name: "Discord: Chat debug",
         organizer_step: true,
-        text: ["Please enter the relay before it gets full, and put a word/smiley inside the relay channel so you check and debug  👍`nThere are still slots to fill! You can join us, there is still time 🏃‍♂️"]
+        text: ["Please enter the relay before it gets full, and put a word/smiley inside the relay channel so you check and debug 👍`nThere are still slots to fill! You can join us, there is still time 🏃‍♂️"]
     },
     {
         name: "Discord: Command for #bless",
-        organizer_step: true,
         text: ["!bless {region_code} {relay} {relay_instance} {minutes_till_bless_command} {bless_types}"]
     },
     {
@@ -259,7 +264,6 @@ for step_num, step in steps {
 gui_status_bar := BlessGui.AddStatusBar(, "Current Step: 0")
 
 ; Add a collapsible Config section
-config_section_visible := false
 gui_config_group := BlessGui.AddGroupBox("x10 y+5 w185 h215 Hidden", "Config")
 gui_config_controls := [gui_config_group]
 
@@ -342,14 +346,9 @@ F2:: AdvanceStep()
 
 ; Toggle the visibility of the Config section
 F3:: {
-    global config_section_visible, gui_config_controls
-
+    global config_section_visible
     config_section_visible := !config_section_visible
-
-    for control in gui_config_controls
-        control.Visible := config_section_visible
-
-    BlessGui.Show("AutoSize NoActivate")
+    UpdateGUI()
 }
 
 ; Toggle auto-advance mode
@@ -537,7 +536,7 @@ ProcessBlessersText() {
 }
 
 UpdateGUI() {
-    global step_controls, gui_status_bar, gui_controls_hint
+    global step_controls, gui_status_bar, gui_controls_hint, gui_config_controls, config_section_visible
 
     ; Update the status bar with the current step and bless time
     gui_status_bar.SetText(GetBlessTimeText() " | Current Step: " current_step)
@@ -554,14 +553,19 @@ UpdateGUI() {
     for section_num, section_text in GetControlHints()
         gui_controls_hint[section_num].Value := section_text
 
+    ; Show/hide the Config section controls based on its current state
+    for control in gui_config_controls
+        control.Visible := config_section_visible
+
     BlessGui.Show("AutoSize NoActivate")
 }
 
 GetControlHints() {
-    global controls_hints, auto_advance
+    global controls_hints, auto_advance, config_section_visible
 
-    ; Add the Auto-Advance hint in the correct state
+    ; Add the Auto-Advance and Config section hints in their correct state
     hints := controls_hints.Clone()
+    hints[3] := config_section_visible ? "Hide Config section " : "Show Config section "
     hints[4] := auto_advance ? "Disable Auto-Advance" : "Enable Auto-Advance "
 
     ; Group hints into sections of F1-F4, F5-F8, F9-F12
