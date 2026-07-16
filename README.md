@@ -19,10 +19,9 @@ double click it to start it.
 - Send the text
 - Repeat these instructions until you run out of steps.
 
-### Warning
-
-The script can conflict with other scripts or programs that use the same hotkeys.\
-It will also overwrite your clipboard contents, so be careful when using it, make sure
+> [!WARNING]
+> The script can conflict with other scripts or programs that use the same hotkeys.\
+> It will also overwrite your clipboard contents, so be careful when using it, make sure
 you don't have anything important copied.
 
 ## Usage Guide
