@@ -567,14 +567,17 @@ GetControlHints() {
 }
 
 CalculateBlessTime() {
-    global bless_time_minute, bless_time_buffer
+    global bless_time_minute, bless_time_buffer, organizer_mode
+
+    ; Only allow organizer mode to reserve time for session setup.
+    effective_buffer := organizer_mode ? bless_time_buffer : 0
 
     ; Get current timestamp
     nowtime := DateDiff(A_NowUTC, "1970", "s")
 
     ; Find next occurrence of bless_time_minute
     new_bless_time := nowtime - mod(nowtime, 3600) + (bless_time_minute * 60)
-    if (new_bless_time - (bless_time_buffer * 60) <= nowtime)
+    if (new_bless_time - (effective_buffer * 60) <= nowtime)
         new_bless_time += 3600
 
     return new_bless_time
