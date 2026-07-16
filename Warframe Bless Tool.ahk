@@ -12,13 +12,7 @@ PatchGUIPrototype()
 ; ============== ;
 ; Customizations ;
 ; ============== ;
-; Auto-Advance mode
-; In Auto-Advance mode, the next step is automatically activated after pasting (Ctrl+V).
-; This option sets whether the Auto-Advance mode is enabled when the script starts.
-; It can also be toggled live with F5.
-auto_advance := false ; true/false
-
-; Clipboard tooltip
+; Clipboard tooltip timeout
 ; The tooltip shows the text that is placed in the clipboard when a step is selected.
 ; This variable sets how long the tooltip is displayed for.
 tooltip_timeout := 3 ; number of seconds
@@ -26,7 +20,7 @@ tooltip_timeout := 3 ; number of seconds
 ; Config section
 ; The Config section holds the Region, Relay, Relay Instance and Blessers controls.
 ; This option sets whether the Config section is expanded when the script starts.
-; It can also be toggled live with F3.
+; It can also be toggled live with F4.
 config_section_visible := false ; true/false
 
 ; Celebration emojis
@@ -235,7 +229,7 @@ BlessGui := Gui("+AlwaysOnTop", "WFBT")
 controls_hints := Map(
     1, "Go back one Step",
     2, "Advance one Step",
-    3, "Toggle Config section",
+    4, "Toggle Config section",
     5, "Nudge Bless time -1m",
     6, "Nudge Bless time +1m",
     8, "Reset Bless time",
@@ -345,16 +339,9 @@ F1:: RewindStep()
 F2:: AdvanceStep()
 
 ; Toggle the visibility of the Config section
-F3:: {
+F4:: {
     global config_section_visible
     config_section_visible := !config_section_visible
-    UpdateGUI()
-}
-
-; Toggle auto-advance mode
-F4:: {
-    global auto_advance
-    auto_advance := !auto_advance
     UpdateGUI()
 }
 
@@ -382,15 +369,6 @@ F8:: {
 F11:: ActivateStep(0)
 
 F12:: ExitApp
-
-; Auto-advance after a paste when enabled
-^v:: {
-    global auto_advance
-    Send "^v"
-    Sleep 100
-    if auto_advance
-        AdvanceStep()
-}
 
 ^r:: Reload
 
@@ -561,12 +539,11 @@ UpdateGUI() {
 }
 
 GetControlHints() {
-    global controls_hints, auto_advance, config_section_visible
+    global controls_hints, config_section_visible
 
-    ; Add the Auto-Advance and Config section hints in their correct state
+    ; Add the Config section hint in its current state
     hints := controls_hints.Clone()
-    hints[3] := config_section_visible ? "Hide Config section " : "Show Config section "
-    hints[4] := auto_advance ? "Disable Auto-Advance" : "Enable Auto-Advance "
+    hints[4] := config_section_visible ? "Hide Config section " : "Show Config section "
 
     ; Group hints into sections of F1-F4, F5-F8, F9-F12
     sections := []
